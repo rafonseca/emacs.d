@@ -53,6 +53,7 @@
 
 (add-hook 'complete-path-mode-hook 'complete-path-hook)
 
+(complete-path-mode t)
 
 (provide 'path-complete)
 ;;; path-complete.el ends here
