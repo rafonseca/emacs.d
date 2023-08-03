@@ -1,0 +1,4 @@
+# key: rni
+# name: NotImplemented
+# --
+raise NotImplementedError  # TODO: implement it

@@ -1,0 +1,11 @@
+# key: wh
+# name: working-hours
+# expand-env: ((yas-indent-line 'nil) (yas-wrap-around-region 'nil))
+# --
+* <${1:`(org-read-date)`}>
+:PROPERTIES:
+:date:      <$1>
+:Effort:    $2
+:subject:   $3
+:END:
+$0

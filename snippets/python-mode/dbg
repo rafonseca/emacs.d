@@ -1,0 +1,5 @@
+# key: dbg
+# name: dbg
+# --
+print(f"{$1=}")
+$0

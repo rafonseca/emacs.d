@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: dict-comprehesion
+# key: fdict
+# --
+{$2: $3 for $2,$3 in $1.items()}$0

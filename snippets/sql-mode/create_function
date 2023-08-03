@@ -1,0 +1,11 @@
+# key: cf
+# name: create function
+# expand-env: ((yas-indent-line 'fixed))
+# --
+create function $1 ($2)
+  returns setof $3
+  language sql
+  volatile strict
+begin atomic
+  $4;
+end;
