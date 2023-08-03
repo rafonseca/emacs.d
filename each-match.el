@@ -22,6 +22,7 @@
 
 ;; 
 
+;;; TODO: make package
 ;;; Code:
 
 (require 'cl-lib)
@@ -53,6 +54,7 @@ Many text manipulating functions deal with start end args, while
   "Like `narrow-to-region' but with single arg.."
   (erx-using-region narrow-to-region region))
 
+
 (defun erx--star-symbol (sym)
   "Returns new symbol preffixed with *"  
   (-it-> sym
@@ -63,7 +65,7 @@ Many text manipulating functions deal with start end args, while
 (defun erx--star-sym-binding (binding)
   "Auxiliary function of macro `for-each-match'."
   (cl-loop for w in binding
- 	   collect `(,(star-symbol w)  (region-text ,w)))
+ 	   collect `(,(erx--star-symbol w)  (erx-using-region buffer-substring-no-properties ,w)))
   )
 
 (cl-defmacro erx-for-each-match (regex  body &key binding  in)
@@ -127,7 +129,7 @@ executes `BODY' with local bindings defined in `RX'. An `RX'
 expression of the form (let NAME ...) binds the symbol NAME to
 the region where the submatch happens and the symbol *NAME to the
 contents of that region, as a string."
-  (let (( binding (extract-rx-bindings rx) ))
+  (let (( binding (erx--extract-rx-bindings rx) ))
     `(with-current-buffer ,(or buffer
 			       (when file (find-file-noselect file))
 			       (current-buffer))
@@ -140,34 +142,32 @@ contents of that region, as a string."
 	))))
 
 
-;; TODO: make package
-;; TODO: make examples
+
+
 
 
 (provide 'each-match)
 ;;; each-match.el ends here
 
-;;; example 1
 
+(ert-deftest example1 ()
+  (erx-loop :rx '(: "[" (let heading (* nonl)) "]\n" (let settings (* (: (not "[") (* nonl) "\n"))) )
+ 	    :file "../.pg_service.conf"
+	    :do (cons *heading
+		      (erx-loop :file "../.pg_service.conf"
+				:narrow settings
+				:rx '(: (let key (* nonl)) "=" (let value (* nonl)) "\n")
+				:do (cons *key *value)))))
 
-(erx-loop :rx '(: "[" (let heading (* nonl)) "]\n" (let settings (* (: (not "[") (* nonl) "\n"))) )
-	  :file "../.pg_service.conf"
-	  :do (cons *heading
-		    (erx-loop :file "../.pg_service.conf"
-			      :narrow settings
-			      :rx '(: (let key (* nonl)) "=" (let value (* nonl)) "\n")
-			      :do (cons *key *value))))
+(ert-deftest example2 ()
+  (with-temp-file "test_file.env"
+    (insert "VAR1=abc\nVAR2=def\n"))
 
+  (with-temp-file "test_file.script"
+    (insert "result = $VAR1 + $VAR2"))
 
-;;; example 3
-(with-temp-file "test_file.env"
-  (insert "VAR1=abc\nVAR2=def\n"))
-
-(with-temp-file "test_file.script"
-  (insert "result = $VAR1 + $VAR2"))
-
-(erx-loop :file "test_file.env"
-	  :rx '(: (let key (* nonl)) "=" (let value (* nonl)))
-	  :do (erx-loop :file "test_file.script"
-			:rx `(: "$" (let to-replace ,*key))
-			:do  (erx-replace-region to-replace *value)))
+  (erx-loop :file "test_file.env"
+	    :rx '(: (let key (* nonl)) "=" (let value (* nonl)))
+	    :do (erx-loop :file "test_file.script"
+			  :rx `(: "$" (let to-replace ,*key))
+			  :do  (erx-replace-region to-replace *value))))
