@@ -153,6 +153,31 @@
   (add-to-list 'eglot-server-programs
                `((python-mode python-ts-mode) .
 		 ,(eglot-alternatives '("pylsp" "pyls" ("poetry" "run" "pyright-langserver" "--stdio")  ("pyright-langserver" "--stdio") "jedi-language-server")))))
+(define-key python-mode-map (kbd "M-<left>")
+	    (defun move-backward-symbol ()
+	      (interactive)
+	      (let ((stuff
+		     (and (region-active-p)
+			  (delete-and-extract-region (point) (mark)))))
+		(forward-symbol -1)
+		(set-mark (point))
+		(when stuff
+		  (insert stuff))
+		(activate-mark))
+	      ))
+
+(define-key python-mode-map (kbd "M-<right>")
+	    (defun move-forward-symbol ()
+	      (interactive)
+	      (let ((stuff
+		     (and (region-active-p)
+			  (delete-and-extract-region (point) (mark)))))
+		(forward-symbol 1)
+		(set-mark (point))
+		(when stuff
+		  (insert stuff))
+		(activate-mark))
+	      ))
 
 
 (define-key global-map (kbd "C-q")
