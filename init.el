@@ -6,7 +6,10 @@
 (cl-pushnew "~/.emacs.d/lisp" load-path)
 
 ;;; General UI
-(load-theme 'tsdh-dark)
+(load-theme 'modus-vivendi)
+
+
+
 (setq inhibit-splash-screen t)
 (setq initial-major-mode 'emacs-lisp-mode) 
 
@@ -85,6 +88,7 @@
   ;; consult-history, consult-outline, consult-error
   :bind (("C-x b" . consult-buffer) ;; orig. switch-to-buffer
          ("M-y" . consult-yank-pop) ;; orig. yank-pop
+         ("M-s M-s" . consult-ripgrep)
          ("C-s" . consult-line))    ;; orig. isearch
   :config
   ;; Narrowing lets you restrict results to certain groups of candidates
@@ -212,9 +216,12 @@
 
 (org-babel-do-load-languages
  'org-babel-load-languages
- '((sql . t)))
+ '((shell . t)(sql . t)))
 
 (setq org-confirm-babel-evaluate nil)
+
+(show-paren-mode 1)
+(setq show-paren-style 'expression)
 
 ;; My packages
 
