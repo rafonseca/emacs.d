@@ -1,7 +1,7 @@
 
 (require 'each-match)
 
-
+;; TODO fix parser
 (defmacro parse-ini-file (filename)
   `(erx-loop :rx '(: "[" (let heading (* nonl)) "]\n" (let settings (* (: (not "[") (* nonl) "\n"))) )
 	    :file ,filename
@@ -13,6 +13,6 @@
 
 
 (ert-deftest parse-ini-file ()
-  (should (parse-ini-file "../.pg_service.conf")))
+  (should (parse-ini-file "~/.pg_service.conf")))
 
 (provide 'parse-ini)

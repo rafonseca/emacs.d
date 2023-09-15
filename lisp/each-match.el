@@ -1,4 +1,4 @@
-;;; each-match.el --- Loop macros for text matching  -*- lexical-binding: t; -*-
+;;; erx-loop.el --- Loop macros for text matching  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2023  Renan Alves Fonseca
 
@@ -22,11 +22,12 @@
 
 ;; 
 
+;;; TODO: provide cl-loop command
 ;;; TODO: make package
 ;;; Code:
 
-(require 'cl-lib)
-(require 'dash)
+
+(require 'dash) ;; we use only -tree-seq
 
 (rx-define let (name content) (group content))
 
@@ -146,28 +147,28 @@ contents of that region, as a string."
 
 
 
-(provide 'each-match)
-;;; each-match.el ends here
+(provide 'erx-loop)
+;;; erx-loop.el ends here
 
 
-(ert-deftest example1 ()
+(ert-deftest erx-example1 ()
   (erx-loop :rx '(: "[" (let heading (* nonl)) "]\n" (let settings (* (: (not "[") (* nonl) "\n"))) )
- 	    :file "../.pg_service.conf"
+ 	    :file "~/.pg_service.conf"
 	    :do (cons *heading
-		      (erx-loop :file "../.pg_service.conf"
+		      (erx-loop :file "~/.pg_service.conf"
 				:narrow settings
 				:rx '(: (let key (* nonl)) "=" (let value (* nonl)) "\n")
 				:do (cons *key *value)))))
 
-(ert-deftest example2 ()
+(ert-deftest erx-example2 ()
   (with-temp-file "test_file.env"
-    (insert "VAR1=abc\nVAR2=def\n"))
+    (insert "VAR1=abc\nVAR2=def\n")
 
-  (with-temp-file "test_file.script"
-    (insert "result = $VAR1 + $VAR2"))
+    (with-temp-file "test_file.script"
+      (insert "result = $VAR1 + $VAR2")
 
-  (erx-loop :file "test_file.env"
-	    :rx '(: (let key (* nonl)) "=" (let value (* nonl)))
-	    :do (erx-loop :file "test_file.script"
-			  :rx `(: "$" (let to-replace ,*key))
-			  :do  (erx-replace-region to-replace *value))))
+      (erx-loop :file "test_file.env"
+		:rx '(: (let key (* nonl)) "=" (let value (* nonl)))
+		:do (erx-loop :file "test_file.script"
+			      :rx `(: "$" (let to-replace ,*key))
+			      :do  (erx-replace-region to-replace *value))))))

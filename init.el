@@ -3,7 +3,7 @@
   (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
   (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
 
-(cl-pushnew "~/.emacs.d/" load-path)
+(cl-pushnew "~/.emacs.d/lisp" load-path)
 
 ;;; General UI
 (load-theme 'tsdh-dark)

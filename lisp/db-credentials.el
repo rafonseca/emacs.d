@@ -14,8 +14,8 @@
 (defun translate-pg-keywords (pg-service-alist)
   (cl-loop for (k . v) in pg-service-alist
 	   collect (cons k  (cl-loop for (kk . vv) in v
-				     collect (cons (map-elt pg-conf-xlt kk) vv) into x
-				     finally return (push '(sql-product "postgresql") x)))))
+				     collect `(,(map-elt pg-conf-xlt kk) ,vv) into x
+				     finally return (push '(sql-product 'postgres) x)))))
 
 
 (thread-last
