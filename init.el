@@ -49,7 +49,7 @@
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (add-hook 'text-mode-hook 'visual-line-mode)
 
-(electric-pair-mode)
+
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 (recentf-mode t)
@@ -129,7 +129,7 @@
   :after corfu
   :config
   (add-to-list 'corfu-margin-formatters #'kind-icon-margin-formatter))
-()
+
 
 (use-package eshell
   :bind (("C-r" . consult-history)))
@@ -194,7 +194,10 @@
 		(mark-sexp))))
 
 
+
 ;;; Org
+
+
 (setq org-todo-keywords '((sequence "TODO(t)" "DOING(o)" "|" "DONE(d)" "FAILED(f)")))
 
 
