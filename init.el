@@ -82,21 +82,17 @@
 
 
 (use-package magit
-  :bind (("<f7>" . 'magit)))
-(use-package forge)
+  :bind (("<f7>" . 'magit))
+  :ensure t)
+(use-package forge
+  :ensure t)
 
-(use-package wgrep)
-(use-package devdocs)
-(use-package htmlize)
-(use-package which-key
-  :config
-  (which-key-mode))
+
 (use-package yasnippet
-  :config (yas-global-mode 1))
+  :config (yas-global-mode 1)
+  :ensure t)
 
 ;;; General
-(use-package avy
-  :bind (("M-j" . avy-goto-char)))
 
 (use-package consult
   ;; Other good things to bind: consult-ripgrep, consult-line-multi,
@@ -104,23 +100,26 @@
   :bind (("C-x b" . consult-buffer) ;; orig. switch-to-buffer
          ("M-y" . consult-yank-pop) ;; orig. yank-pop
          ("M-s M-s" . consult-ripgrep)
-         ("C-s" . consult-line))    ;; orig. isearch
+         ("C-s" . consult-line)) ;; orig. isearch
   :config
   ;; Narrowing lets you restrict results to certain groups of candidates
-  (setq consult-narrow-key "<"))
+  (setq consult-narrow-key "<")
+  :ensure t)
 
 (use-package embark
   :after avy
   :bind (("C-c a" . embark-act))
-  )
+  :ensure t)
 
-(use-package embark-consult)
+(use-package embark-consult
+  :ensure t)
 
 ;; Vertico: better vertical completion for minibuffer commands
 (use-package vertico
   :init
   (fido-mode -1)
-  (vertico-mode))
+  (vertico-mode)
+  :ensure t)
 
 
 ;; Marginalia: annotations for minibuffer
@@ -137,6 +136,7 @@
  
 ;; Make corfu popup come up in terminal overlay
 (use-package corfu-terminal
+  :ensure t
   :if (not (display-graphic-p))
   :config
   (corfu-terminal-mode))
@@ -151,6 +151,7 @@
 
 
 (use-package eshell
+  :ensure t
   :bind (("C-r" . consult-history)))
 
 (use-package vterm
@@ -163,13 +164,16 @@
   (setq completion-styles '(orderless)))
 
 (use-package aggressive-indent
+  :ensure t
   :config
   (aggressive-indent-mode))
 
 
 ;; Python
-(use-package poetry)
-(use-package blacken)
+(use-package poetry
+  :ensure t)
+(use-package blacken
+  :ensure t)
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
                `((python-mode python-ts-mode) .
