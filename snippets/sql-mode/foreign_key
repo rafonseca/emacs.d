@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: foreign key
-# key: fk
-# --
-$1_id int references $1,

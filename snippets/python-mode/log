@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: log
-# key: log
-# --
-logger.info(f"{$1=}")

@@ -9,10 +9,19 @@
 (load-theme 'modus-vivendi)
 
 
-
 (setq inhibit-splash-screen t)
-(setq initial-major-mode 'emacs-lisp-mode) 
+(setq initial-major-mode 'emacs-lisp-mode)
 
+;; Lispy mode
+(use-package lispy
+  :hook (emacs-lisp-mode . lispy-mode)
+  :bind (("S-SPC" . "(")
+	 :map lispy-mode-map
+	 ("C->" . lispy-forward-slurp-sexp)
+	 ("C-<" . lispy-backward-slurp-sexp)))
+
+(show-paren-mode 1)
+(setq show-paren-style 'expression)
 
 ;; Minibuffer
 (savehist-mode)
@@ -62,9 +71,15 @@
   (mapc (lambda (hook) (add-hook hook 'hl-line-mode)) hl-line-hooks))
 
 
-
-
+;;; Set shell path
+(setq shell-command-switch "-ic")
+;; -i switch enforces .bashrc source, where PATH is configured
+(use-package exec-path-from-shell
+  :ensure t)
+(when (daemonp)
+  (exec-path-from-shell-initialize))
 ;;; Packages
+
 
 (use-package magit
   :bind (("<f7>" . 'magit)))
@@ -138,6 +153,9 @@
 (use-package eshell
   :bind (("C-r" . consult-history)))
 
+(use-package vterm
+  :ensure t)
+
 ;; Orderless: powerful completion style
 (use-package orderless
   :ensure t
@@ -149,7 +167,6 @@
   (aggressive-indent-mode))
 
 
-
 ;; Python
 (use-package poetry)
 (use-package blacken)
@@ -157,31 +174,7 @@
   (add-to-list 'eglot-server-programs
                `((python-mode python-ts-mode) .
 		 ,(eglot-alternatives '("pylsp" "pyls" ("poetry" "run" "pyright-langserver" "--stdio")  ("pyright-langserver" "--stdio") "jedi-language-server")))))
-(define-key python-mode-map (kbd "M-<left>")
-	    (defun move-backward-symbol ()
-	      (interactive)
-	      (let ((stuff
-		     (and (region-active-p)
-			  (delete-and-extract-region (point) (mark)))))
-		(forward-symbol -1)
-		(set-mark (point))
-		(when stuff
-		  (insert stuff))
-		(activate-mark))
-	      ))
 
-(define-key python-mode-map (kbd "M-<right>")
-	    (defun move-forward-symbol ()
-	      (interactive)
-	      (let ((stuff
-		     (and (region-active-p)
-			  (delete-and-extract-region (point) (mark)))))
-		(forward-symbol 1)
-		(set-mark (point))
-		(when stuff
-		  (insert stuff))
-		(activate-mark))
-	      ))
 
 
 (define-key global-map (kbd "C-q")
@@ -196,14 +189,10 @@
 	      (if (use-region-p)
 		  (kill-ring-save nil nil t)
 		(mark-sexp))))
-
-
-
 ;;; Org
 
 
 (setq org-todo-keywords '((sequence "TODO(t)" "DOING(o)" "|" "DONE(d)" "FAILED(f)")))
-
 
 (add-hook
  'org-after-todo-state-change-hook
@@ -212,7 +201,8 @@
        (org-clock-in)))
  )
 
-
+(setq org-duration-format 'h:mm)
+(setq org-log-done 'time)
 
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -220,11 +210,26 @@
 
 (setq org-confirm-babel-evaluate nil)
 
-(show-paren-mode 1)
-(setq show-paren-style 'expression)
 
 ;; My packages
 
-(require 'dired-tweaks)
-(require 'db-credentials)
 (require 'path-complete)
+
+;; Commitizen hack
+(defvar cz-scope-history nil)
+(defvar cz-msg-history nil)
+(defvar cz-types '("feat" "fix" "refactor" "build" "ci" "perf" "docs" "revert" "style" "test" "chore"))
+
+(defun cz-msg (convention scope msg &optional breaking)
+  (interactive
+   (list (completing-read "Type: " cz-types)
+	 (completing-read "Scope: " cz-scope-history nil nil nil 'cz-scope-history)
+	 (completing-read "Message: " cz-msg-history nil nil nil 'cz-msg-history)
+	 ))
+  (insert (format "%s(%s)%s: %s" convention scope (if current-prefix-arg "!" "") msg)))
+
+(keymap-set git-commit-mode-map "C-c C-z" 'cz-msg)
+
+
+
+

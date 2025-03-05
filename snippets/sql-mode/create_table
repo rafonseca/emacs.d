@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: create table
-# key: ct
-# --
-create table $1 (
-$1_id serial primary key,
-$2
-);
